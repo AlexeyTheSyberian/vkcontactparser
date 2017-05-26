@@ -1,4 +1,4 @@
-package ru.hladobor.vkparser;
+package ru.hladobor.vkparser.parser;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.http.client.utils.URIBuilder;
@@ -7,6 +7,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import ru.hladobor.vkparser.VkConnectionAgent;
 import ru.hladobor.vkparser.output.OutputService;
 import ru.hladobor.vkparser.output.impl.CsvOutputService;
 
@@ -22,7 +23,7 @@ import java.util.Properties;
 /**
  * Created by sever on 06.05.2017.
  */
-public class Parser {
+public class FriendsParser {
 
     private static String NULL_VALUE = "Не указано";
 
@@ -53,7 +54,7 @@ public class Parser {
     private Logger LOGGER = Logger.getRootLogger();
     Properties properties;
 
-    public Parser() {
+    public FriendsParser() {
         properties = new Properties();
         try {
             properties.load(new FileInputStream("vk.properties"));
@@ -63,7 +64,7 @@ public class Parser {
         }
     }
 
-    public void parse() throws UnsupportedEncodingException {
+    public void parse() {
         URIBuilder uriBuilder = VkConnectionAgent.buildFriendsURI(properties.getProperty("userId"),
                 properties.getProperty("token"));
         LOGGER.info("URI: " + uriBuilder.toString());
@@ -167,14 +168,6 @@ public class Parser {
             value = obj == null ? NULL_VALUE : obj.toString();
         }
         return value.trim();
-    }
-
-    public void parseGroup(String groupId){
-        URIBuilder uriBuilder = VkConnectionAgent.builgGroupMembersURI(groupId,
-                properties.getProperty("token"), 1000, 0);
-        StringWriter content = VkConnectionAgent.getResponseContent(uriBuilder);
-        System.out.println("Group request: " + uriBuilder.toString());
-        System.out.println("group response: " + content.toString());
     }
 
 }

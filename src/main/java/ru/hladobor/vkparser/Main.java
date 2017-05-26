@@ -1,5 +1,7 @@
 package ru.hladobor.vkparser;
 
+import ru.hladobor.vkparser.parser.FriendsParser;
+
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -11,10 +13,10 @@ public class Main {
 
     public static void main(String[] args) throws UnsupportedEncodingException {
         System.out.println("Encoding: " + System.getProperty("file.encoding"));
-        Parser vkParser = new Parser();
-        vkParser.parse();
+        FriendsParser vkFriendsParser = new FriendsParser();
+        vkFriendsParser.parse();
 
-        vkParser.parseGroup("rus_rock_kingdom");
+        vkFriendsParser.parseGroup("rus_rock_kingdom");
     }
 
 }
