@@ -20,11 +20,6 @@ public class CsvOutputService extends OutputService {
     }
 
     @Override
-    public void fillHeader(String[] headers) {
-        joinAndOutput(headers);
-    }
-
-    @Override
     public void fillRow(String[] outputValues) {
         joinAndOutput(outputValues);
     }

@@ -8,6 +8,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import ru.hladobor.vkparser.output.OutputService;
 
 import java.io.FileOutputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -24,6 +25,7 @@ public class XlsxOuputService extends OutputService {
     public XlsxOuputService(String outputPath){
         this.outputPath = outputPath;
         workbook = new HSSFWorkbook();
+        sheetMap = new HashMap<>();
     }
 
     public void addSheet(String sheetName){
@@ -39,16 +41,17 @@ public class XlsxOuputService extends OutputService {
     }
 
     @Override
-    public void fillHeader(String[] headers) {
-        Sheet sheet = sheetMap.get(currentSheetName);
-        fillRow(sheet, 0, headers);
-    }
-
-    @Override
     public void fillRow(String[] outputValues) {
         Sheet sheet = sheetMap.get(currentSheetName);
         int lastRowNum = sheet.getLastRowNum();
-        fillRow(sheet, ++lastRowNum, outputValues);
+        int currRowNum = lastRowNum+1;
+        if(lastRowNum == 0){
+            int physLastRowNum = sheet.getPhysicalNumberOfRows();
+            if(physLastRowNum == 0){
+                currRowNum = 0;
+            }
+        }
+        fillRow(sheet, currRowNum, outputValues);
     }
 
     private void fillRow(Sheet sheet, int rowNum, String[] values){
@@ -63,6 +66,8 @@ public class XlsxOuputService extends OutputService {
     public void close() throws Exception {
         try(FileOutputStream fos = new FileOutputStream(outputPath)){
             workbook.write(fos);
+        }finally {
+            workbook.close();
         }
     }
 }

@@ -23,10 +23,7 @@ import java.util.Properties;
 /**
  * Created by sever on 06.05.2017.
  */
-public class FriendsParser {
-
-    private static String NULL_VALUE = "Не указано";
-
+public class FriendsParser extends BaseParser{
     private static Map<String, String> FIELD_TITLES;
     private static Map<String, String> UNIVERSITY_FIELD_TITLES;
 
@@ -70,15 +67,15 @@ public class FriendsParser {
         LOGGER.info("URI: " + uriBuilder.toString());
         StringWriter content = VkConnectionAgent.getResponseContent(uriBuilder);
         String outputPath = Paths.get(properties.getProperty("outputPath", ""), "output.csv").toString();
-        JSONParser parser = new JSONParser();
 
         String[] fieldNames = properties.getProperty("fieldsToOuput").split(",");
         String[] universityFieldNames = properties.getProperty("universityFields").split(",");
 
         try (OutputService output = new CsvOutputService(outputPath)) {
-             output.fillHeader(buildHeaderData(fieldNames, universityFieldNames));
+
+            output.fillRow(buildHeaderData(fieldNames, universityFieldNames));
             LOGGER.info("Content: " + content.toString());
-            JSONObject jsonResp = (JSONObject) parser.parse(content.toString());
+            JSONObject jsonResp = parseStringForObject(content.toString());
             LOGGER.info("Response: " + jsonResp.toJSONString());
             JSONArray postsList = (JSONArray) ((Map) jsonResp.get("response")).get("items");
             System.out.println("records number: " + postsList.size());
@@ -148,26 +145,4 @@ public class FriendsParser {
         }
         return result;
     }
-
-    private String getValueForField(String field, JSONObject json) {
-        String value = NULL_VALUE;
-        if (!field.contains(".")) {
-            if (json.get(field) != null) {
-                value = json.get(field).toString();
-            }
-        } else {
-            String[] fieldObjects = field.split("\\.");
-            int counter = 0;
-            Object obj = json.get(fieldObjects[counter++]);
-            while (counter < fieldObjects.length) {
-                if (obj == null) {
-                    break;
-                }
-                obj = ((JSONObject) obj).get(fieldObjects[counter++]);
-            }
-            value = obj == null ? NULL_VALUE : obj.toString();
-        }
-        return value.trim();
-    }
-
 }

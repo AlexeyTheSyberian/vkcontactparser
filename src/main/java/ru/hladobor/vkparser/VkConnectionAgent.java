@@ -30,12 +30,22 @@ public class VkConnectionAgent {
     public static URIBuilder builgGroupMembersURI(String groupId, String token, int count, int offset){
         URIBuilder uriBuilder = new URIBuilder();
         uriBuilder.setScheme("https").setHost("api.vk.com").setPath("/method/groups.getMembers")
-                //.setParameter("domain", GROUP_DOMAIN)
                 .setParameter("group_id", groupId)
                 .setParameter("fields",
                         "bdate, city, country, domain, contacts, connections, site, education, universities, schools")
                 .setParameter("offset", String.valueOf(offset))
                 .setParameter("count", String.valueOf(count))
+                .setParameter("v", "5.8")
+                .setParameter("access_token", token);
+        return uriBuilder;
+    }
+
+    public static URIBuilder buildGroupInfoURI(String groupId, String token){
+        URIBuilder uriBuilder = new URIBuilder();
+        uriBuilder.setScheme("https").setHost("api.vk.com").setPath("/method/groups.getById")
+                .setParameter("group_ids", groupId)
+                .setParameter("fields",
+                        "city,country,place,description,members_count,activity,status,contacts,links")
                 .setParameter("v", "5.8")
                 .setParameter("access_token", token);
         return uriBuilder;

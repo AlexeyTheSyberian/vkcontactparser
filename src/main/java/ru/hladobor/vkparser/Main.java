@@ -1,6 +1,7 @@
 package ru.hladobor.vkparser;
 
 import ru.hladobor.vkparser.parser.FriendsParser;
+import ru.hladobor.vkparser.parser.GroupParser;
 
 import java.io.UnsupportedEncodingException;
 
@@ -16,7 +17,8 @@ public class Main {
         FriendsParser vkFriendsParser = new FriendsParser();
         vkFriendsParser.parse();
 
-        vkFriendsParser.parseGroup("rus_rock_kingdom");
+        GroupParser groupParser = new GroupParser();
+        groupParser.parse();
     }
 
 }
