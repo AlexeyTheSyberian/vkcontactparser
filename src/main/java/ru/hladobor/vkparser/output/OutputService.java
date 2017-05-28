@@ -15,7 +15,7 @@ public abstract class OutputService implements AutoCloseable {
         } catch (UnsupportedEncodingException e) {
             output += ";Error while encoding to WINDOWS-1251";
         }
-        //return output;
-        return strUtf8;
+        return output;
+        //return strUtf8;
     }
 }
