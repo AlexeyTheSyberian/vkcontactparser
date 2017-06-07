@@ -1,6 +1,5 @@
 package ru.hladobor.vkparser.parser;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -10,18 +9,14 @@ import ru.hladobor.vkparser.VkConnectionAgent;
 import ru.hladobor.vkparser.output.OutputService;
 import ru.hladobor.vkparser.output.impl.CsvOutputService;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Created by sever on 06.05.2017.
  */
-public class FriendsParser extends BaseParser{
+public class FriendsParser extends BaseParser {
     private Logger LOGGER = Logger.getRootLogger();
 
     public FriendsParser() {

@@ -9,7 +9,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -18,36 +18,38 @@ import java.util.Properties;
  * Created by sever on 27.05.2017.
  */
 public class BaseParser {
-    protected static String NULL_VALUE = "Не указано";
+    private static String NULL_VALUE;
+
     private static Map<String, String> FIELD_TITLES;
     private static Map<String, String> UNIVERSITY_FIELD_TITLES;
 
-    static{
+    static {
+        NULL_VALUE = forceConvertToUTF8("РќР• РЈРљРђР—РђРќРћ");
+
         FIELD_TITLES = new HashMap<>();
-        FIELD_TITLES.put("last_name","Фамилия");
-        FIELD_TITLES.put("first_name","Имя");
-        FIELD_TITLES.put("bdate","День рождения");
-        FIELD_TITLES.put("country.title","Страна");
-        FIELD_TITLES.put("city.title","Город");
-        FIELD_TITLES.put("mobile_phone","Мобильный телефон");
-        FIELD_TITLES.put("home_phone","Домашний телефон");
-        FIELD_TITLES.put("domain","Skype");
+        FIELD_TITLES.put("last_name", forceConvertToUTF8("Р¤Р°РјРёР»РёСЏ"));
+        FIELD_TITLES.put("first_name", forceConvertToUTF8("РРјСЏ"));
+        FIELD_TITLES.put("bdate", forceConvertToUTF8("Р”РµРЅСЊ СЂРѕР¶РґРµРЅРёСЏ"));
+        FIELD_TITLES.put("country.title", forceConvertToUTF8("РЎС‚СЂР°РЅР°"));
+        FIELD_TITLES.put("city.title", forceConvertToUTF8("Р“РѕСЂРѕРґ"));
+        FIELD_TITLES.put("mobile_phone", forceConvertToUTF8("РњРѕР±РёР»СЊРЅС‹Р№ С‚РµР»РµС„РѕРЅ"));
+        FIELD_TITLES.put("home_phone", forceConvertToUTF8("Р”РѕРјР°С€РЅРёР№ С‚РµР»РµС„РѕРЅ"));
+        FIELD_TITLES.put("domain", forceConvertToUTF8("Skype"));
 
 
         UNIVERSITY_FIELD_TITLES = new HashMap<>();
-        UNIVERSITY_FIELD_TITLES.put("name","ВУЗ");
-        UNIVERSITY_FIELD_TITLES.put("faculty_name","Факультет");
-        UNIVERSITY_FIELD_TITLES.put("chair_name","Кафедра");
-        UNIVERSITY_FIELD_TITLES.put("education_form","Форма обучения");
-        UNIVERSITY_FIELD_TITLES.put("education_status","Статус");
-        UNIVERSITY_FIELD_TITLES.put("graduation","Год выпуска");
-
+        UNIVERSITY_FIELD_TITLES.put("name", forceConvertToUTF8("Р’РЈР—"));
+        UNIVERSITY_FIELD_TITLES.put("faculty_name", forceConvertToUTF8("Р¤Р°РєСѓР»СЊС‚РµС‚"));
+        UNIVERSITY_FIELD_TITLES.put("chair_name", forceConvertToUTF8("РљР°С„РµРґСЂР°"));
+        UNIVERSITY_FIELD_TITLES.put("education_form", forceConvertToUTF8("Р¤РѕСЂРјР° РѕР±СѓС‡РµРЅРёСЏ"));
+        UNIVERSITY_FIELD_TITLES.put("education_status", forceConvertToUTF8("РЎС‚Р°С‚СѓСЃ"));
+        UNIVERSITY_FIELD_TITLES.put("graduation", forceConvertToUTF8("Р“РѕРґ РІС‹РїСѓСЃРєР°"));
     }
 
     protected JSONParser parser = new JSONParser();
     protected Properties properties;
 
-    public BaseParser(){
+    public BaseParser() {
         properties = new Properties();
         try {
             properties.load(new FileInputStream("vk.properties"));
@@ -82,32 +84,32 @@ public class BaseParser {
         return value.trim();
     }
 
-    protected String[] buildUserOutputData(JSONObject json){
+    protected String[] buildUserOutputData(JSONObject json) {
         String[] result = null;
         String[] fieldsToOutput = properties.getProperty("fieldsToOuput").split(",");
         String[] noUnivercityInfo = new String[fieldsToOutput.length];
-        for (int i =0; i < fieldsToOutput.length; i++){
+        for (int i = 0; i < fieldsToOutput.length; i++) {
             String field = fieldsToOutput[i];
             String value = getValueForField(field, json);
             noUnivercityInfo[i] = value;
         }
 
         JSONArray universities = (JSONArray) json.get("universities");
-        if(universities != null && universities.size() > 0) {
+        if (universities != null && universities.size() > 0) {
             for (int i = 0; i < universities.size(); i++) {
                 String[] universityData = buildIUniversityData((JSONObject) universities.get(i));
                 result = (String[]) ArrayUtils.addAll(noUnivercityInfo, universityData);
             }
-        }else{
-            result = (String[])ArrayUtils.addAll(noUnivercityInfo, buildEmptyUniversityData());
+        } else {
+            result = (String[]) ArrayUtils.addAll(noUnivercityInfo, buildEmptyUniversityData());
         }
         return result;
     }
 
-    private String[] buildIUniversityData(JSONObject university){
+    private String[] buildIUniversityData(JSONObject university) {
         String[] fields = properties.getProperty("universityFields").split(",");
         String[] result = new String[fields.length];
-        for(int i =0; i < fields.length; i++){
+        for (int i = 0; i < fields.length; i++) {
             String field = fields[i];
             String value = getValueForField(field, university);
             result[i] = value;
@@ -115,16 +117,16 @@ public class BaseParser {
         return result;
     }
 
-    private String[] buildEmptyUniversityData(){
+    private String[] buildEmptyUniversityData() {
         String[] fields = properties.getProperty("universityFields").split(",");
         String[] result = new String[fields.length];
-        for(int i = 0; i < fields.length; i++){
+        for (int i = 0; i < fields.length; i++) {
             result[i] = NULL_VALUE;
         }
         return result;
     }
 
-    protected String[] buildHeaderData(){
+    protected String[] buildHeaderData() {
         String[] fieldsNames = properties.getProperty("fieldsToOuput").split(",");
         String[] universityFieldNames = properties.getProperty("universityFields").split(",");
         String[] result = new String[fieldsNames.length + universityFieldNames.length];
@@ -134,6 +136,16 @@ public class BaseParser {
         }
         for (String field : universityFieldNames) {
             result[counter++] = UNIVERSITY_FIELD_TITLES.get(field);
+        }
+        return result;
+    }
+
+    protected static String forceConvertToUTF8(String message) {
+        String result = message;
+        try {
+            result = new String(result.getBytes("UTF-8"), "Cp1251");
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Error while encoding to UTF-8");
         }
         return result;
     }

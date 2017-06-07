@@ -9,8 +9,8 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <project.build.sourceEncoding>WINDOWS-1251</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>WINDOWS-1251</project.reporting.outputEncoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>WINDDWS-1251</project.reporting.outputEncoding>
     </properties>
 
 
@@ -94,7 +94,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>ru.hladobor.ru.hladobor.vkparser.Main</mainClass>
+                            <mainClass>ru.hladobor.vkparser.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

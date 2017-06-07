@@ -1,49 +1,47 @@
 package ru.hladobor.vkparser.parser;
 
-import jdk.nashorn.internal.runtime.arrays.ArrayLikeIterator;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import ru.hladobor.vkparser.VkConnectionAgent;
-import ru.hladobor.vkparser.output.OutputService;
 import ru.hladobor.vkparser.output.impl.XlsxOuputService;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.StringWriter;
-import java.math.BigDecimal;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by sever on 26.05.2017.
  */
-public class GroupParser extends BaseParser{
+public class GroupParser extends BaseParser {
     private Logger LOGGER = Logger.getRootLogger();
 
     public GroupParser() {
-       super();
+        super();
     }
 
-    public void parse(){
+    public void parse() {
         String[] groups = properties.getProperty("groups").split(",");
         String outputPath = Paths.get(properties.getProperty("outputPath", ""), "groups.xls").toString();
         String token = properties.getProperty("token");
-        try(XlsxOuputService outpuService = new XlsxOuputService(outputPath)){
+        try (XlsxOuputService outpuService = new XlsxOuputService(outputPath)) {
 
-            for(String group : groups){
+            for (String group : groups) {
                 System.out.println("Starting to parse group: " + group);
                 URIBuilder groupInfoBuidler = VkConnectionAgent.buildGroupInfoURI(group, token);
                 StringWriter groupInfoContent = VkConnectionAgent.getResponseContent(groupInfoBuidler);
                 List<ArrayList<String>> groupInfo = buildGroupInfo(parseStringForObject(groupInfoContent.toString()));
                 outpuService.addSheet(group);
-                for(ArrayList<String> rowArr : groupInfo){
+                for (ArrayList<String> rowArr : groupInfo) {
                     outpuService.fillRow(rowArr.toArray(new String[rowArr.size()]));
                 }
                 outpuService.fillRow(Arrays.asList("").toArray(new String[1]));
-                outpuService.fillRow(Arrays.asList("Участники группы").toArray(new String[1]));
+                outpuService.fillRow(Arrays.asList(forceConvertToUTF8("РЈС‡Р°СЃС‚РЅРёРєРё РіСЂСѓРїРїС‹")).toArray(new String[1]));
                 outpuService.fillRow(buildHeaderData());
                 List<ArrayList<String>> users = buildGroupUsersList(group, token, outpuService);
             }
@@ -53,18 +51,18 @@ public class GroupParser extends BaseParser{
         }
     }
 
-    List<ArrayList<String>> buildGroupInfo(JSONObject outerJson){
-        JSONObject json = (JSONObject)((JSONArray)outerJson.get("response")).get(0);
+    List<ArrayList<String>> buildGroupInfo(JSONObject outerJson) {
+        JSONObject json = (JSONObject) ((JSONArray) outerJson.get("response")).get(0);
         List<ArrayList<String>> result = new ArrayList<>();
         ArrayList<String> caption = new ArrayList<>(Arrays.asList(getValueForField("name", json)));
         result.add(caption);
         ArrayList<String> members = new ArrayList<>(Arrays.asList(
-                "Кол-во участников", getValueForField("members_count", json)));
+                forceConvertToUTF8("РљРѕР»-РІРѕ СѓС‡Р°СЃС‚РЅРёРєРѕРІ"), getValueForField("members_count", json)));
         result.add(members);
-        result.add(new ArrayList<>(Arrays.asList("Администрация: ")));
+        result.add(new ArrayList<>(Arrays.asList(forceConvertToUTF8("РђРґРјРёРЅРёСЃС‚СЂР°С†РёСЏ: "))));
 
-        JSONArray contacts = (JSONArray)json.get("contacts");
-        for(int i = 0; i < contacts.size(); i++){
+        JSONArray contacts = (JSONArray) json.get("contacts");
+        for (int i = 0; i < contacts.size(); i++) {
             JSONObject contact = (JSONObject) contacts.get(i);
             ArrayList<String> contactArr = new ArrayList<>(Arrays.asList(
                     getValueForField("desc", contact), getValueForField("user_id", contact)));
@@ -79,11 +77,11 @@ public class GroupParser extends BaseParser{
         int count = 1000;
         int offset = 0;
         Long membersCount = 0L;
-        do{
+        do {
             URIBuilder uriBuilder = VkConnectionAgent.builgGroupMembersURI(group, token, count, offset);
             JSONObject content = parseStringForObject(VkConnectionAgent.getResponseContent(uriBuilder).toString());
-            Map<String, Object> responseMap = (Map)content.get("response");
-            if(membersCount == 0) {
+            Map<String, Object> responseMap = (Map) content.get("response");
+            if (membersCount == 0) {
                 membersCount = (Long) responseMap.get("count");
                 System.out.println("Members: " + membersCount);
             }
@@ -95,7 +93,7 @@ public class GroupParser extends BaseParser{
                 outputService.fillRow(output);
             }
             System.out.println("Group " + group + "; parsed " + offset + " members of " + membersCount);
-        }while(offset < membersCount );
+        } while (offset < membersCount);
         return result;
     }
 }

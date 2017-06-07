@@ -24,19 +24,19 @@ public class CsvOutputService extends OutputService {
         joinAndOutput(outputValues);
     }
 
-    private void joinAndOutput(String[] output){
+    private void joinAndOutput(String[] output) {
         writer.println(encodeToWin1251(String.join(";", output)));
     }
 
     @Override
     public void close() throws Exception {
-        if(writer != null){
+        if (writer != null) {
             writer.close();
         }
-        if(osWriter != null){
+        if (osWriter != null) {
             osWriter.close();
         }
-        if(fos != null){
+        if (fos != null) {
             fos.close();
         }
     }

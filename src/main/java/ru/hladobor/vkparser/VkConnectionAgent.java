@@ -27,7 +27,7 @@ public class VkConnectionAgent {
         return uriBuilder;
     }
 
-    public static URIBuilder builgGroupMembersURI(String groupId, String token, int count, int offset){
+    public static URIBuilder builgGroupMembersURI(String groupId, String token, int count, int offset) {
         URIBuilder uriBuilder = new URIBuilder();
         uriBuilder.setScheme("https").setHost("api.vk.com").setPath("/method/groups.getMembers")
                 .setParameter("group_id", groupId)
@@ -40,7 +40,7 @@ public class VkConnectionAgent {
         return uriBuilder;
     }
 
-    public static URIBuilder buildGroupInfoURI(String groupId, String token){
+    public static URIBuilder buildGroupInfoURI(String groupId, String token) {
         URIBuilder uriBuilder = new URIBuilder();
         uriBuilder.setScheme("https").setHost("api.vk.com").setPath("/method/groups.getById")
                 .setParameter("group_ids", groupId)
@@ -48,6 +48,13 @@ public class VkConnectionAgent {
                         "city,country,place,description,members_count,activity,status,contacts,links")
                 .setParameter("v", "5.8")
                 .setParameter("access_token", token);
+        return uriBuilder;
+    }
+
+    public static URIBuilder buildGetUserByIdURI(String userIds){
+        URIBuilder uriBuilder = new URIBuilder();
+        uriBuilder.setScheme("https").setHost("api.vk.com").setPath("/method/groups.getById")
+                .setParameter("user_ids", userIds);
         return uriBuilder;
     }
 

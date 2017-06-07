@@ -22,21 +22,21 @@ public class XlsxOuputService extends OutputService {
 
     private String currentSheetName;
 
-    public XlsxOuputService(String outputPath){
+    public XlsxOuputService(String outputPath) {
         this.outputPath = outputPath;
         workbook = new HSSFWorkbook();
         sheetMap = new HashMap<>();
     }
 
-    public void addSheet(String sheetName){
-        if(!sheetMap.containsKey(sheetName)){
+    public void addSheet(String sheetName) {
+        if (!sheetMap.containsKey(sheetName)) {
             Sheet newSheet = workbook.createSheet(sheetName);
             sheetMap.put(sheetName, newSheet);
         }
-        currentSheetName = sheetName;
+        setCurrentSheet(sheetName);
     }
 
-    public void setCurrentSheet(String sheetName){
+    public void setCurrentSheet(String sheetName) {
         currentSheetName = sheetName;
     }
 
@@ -44,19 +44,19 @@ public class XlsxOuputService extends OutputService {
     public void fillRow(String[] outputValues) {
         Sheet sheet = sheetMap.get(currentSheetName);
         int lastRowNum = sheet.getLastRowNum();
-        int currRowNum = lastRowNum+1;
-        if(lastRowNum == 0){
+        int currRowNum = lastRowNum + 1;
+        if (lastRowNum == 0) {
             int physLastRowNum = sheet.getPhysicalNumberOfRows();
-            if(physLastRowNum == 0){
+            if (physLastRowNum == 0) {
                 currRowNum = 0;
             }
         }
         fillRow(sheet, currRowNum, outputValues);
     }
 
-    private void fillRow(Sheet sheet, int rowNum, String[] values){
+    private void fillRow(Sheet sheet, int rowNum, String[] values) {
         Row row = sheet.createRow(rowNum);
-        for(int i = 0; i < values.length; i++){
+        for (int i = 0; i < values.length; i++) {
             Cell cell = row.createCell(i);
             cell.setCellValue(encodeToWin1251(values[i]));
         }
@@ -64,9 +64,9 @@ public class XlsxOuputService extends OutputService {
 
     @Override
     public void close() throws Exception {
-        try(FileOutputStream fos = new FileOutputStream(outputPath)){
+        try (FileOutputStream fos = new FileOutputStream(outputPath)) {
             workbook.write(fos);
-        }finally {
+        } finally {
             workbook.close();
         }
     }

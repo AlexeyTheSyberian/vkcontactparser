@@ -8,7 +8,7 @@ import java.io.UnsupportedEncodingException;
 public abstract class OutputService implements AutoCloseable {
     public abstract void fillRow(String[] outputValues);
 
-    protected String encodeToWin1251(String strUtf8){
+    protected String encodeToWin1251(String strUtf8) {
         String output = strUtf8;
         try {
             output = new String(strUtf8.getBytes("Cp1251"), "UTF-8");
@@ -16,6 +16,5 @@ public abstract class OutputService implements AutoCloseable {
             output += ";Error while encoding to WINDOWS-1251";
         }
         return output;
-        //return strUtf8;
     }
 }
