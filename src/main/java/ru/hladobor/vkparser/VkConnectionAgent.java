@@ -53,7 +53,7 @@ public class VkConnectionAgent {
 
     public static URIBuilder buildGetUserByIdURI(String userIds){
         URIBuilder uriBuilder = new URIBuilder();
-        uriBuilder.setScheme("https").setHost("api.vk.com").setPath("/method/groups.getById")
+        uriBuilder.setScheme("https").setHost("api.vk.com").setPath("/method/users.get")
                 .setParameter("user_ids", userIds);
         return uriBuilder;
     }

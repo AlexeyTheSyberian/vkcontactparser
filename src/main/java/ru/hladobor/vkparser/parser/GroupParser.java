@@ -64,8 +64,10 @@ public class GroupParser extends BaseParser {
         JSONArray contacts = (JSONArray) json.get("contacts");
         for (int i = 0; i < contacts.size(); i++) {
             JSONObject contact = (JSONObject) contacts.get(i);
+            String userId = getValueForField("user_id", contact);
+            String contactStr = buildShortUserInfo(userId);
             ArrayList<String> contactArr = new ArrayList<>(Arrays.asList(
-                    getValueForField("desc", contact), getValueForField("user_id", contact)));
+                    getValueForField("desc", contact), contactStr));
             result.add(contactArr);
         }
         return result;
@@ -95,5 +97,22 @@ public class GroupParser extends BaseParser {
             System.out.println("Group " + group + "; parsed " + offset + " members of " + membersCount);
         } while (offset < membersCount);
         return result;
+    }
+
+    private String buildShortUserInfo(String userId) {
+        StringBuilder result = new StringBuilder();
+        try {
+            URIBuilder getUserURI = VkConnectionAgent.buildGetUserByIdURI(userId);
+            JSONArray response = (JSONArray) parseStringForObject(
+                    VkConnectionAgent.getResponseContent(getUserURI).toString())
+                    .get("response");
+            JSONObject user = (JSONObject) response.get(0);
+            result.append(user.get("last_name")).append(" ").append(user.get("first_name"))
+                    .append("(id=").append(userId).append(")");
+        } catch (ParseException ex) {
+            LOGGER.error("Error parsing user data: id = " + userId + ";");
+            LOGGER.error(ex);
+        }
+        return result.toString();
     }
 }
